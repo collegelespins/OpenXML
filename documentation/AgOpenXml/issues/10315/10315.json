@@ -1,0 +1,50 @@
+{
+  "WorkItem": {
+    "AffectedComponent": {
+      "Name": "",
+      "DisplayName": ""
+    },
+    "ClosedComment": "",
+    "ClosedDate": null,
+    "CommentCount": 0,
+    "Custom": null,
+    "Description": "The logic around converting column indexes and counds relies purely on a conversion between int and char.  This works well when the column index is < 26, however as Excel would go to wrap to column AA, the CellName property returns '['.  This bug is also present in the FiftyNine.Ag.OpenXML.Excel.Utilities.Formatting static class as the total size of the spreadsheet is determined.",
+    "LastUpdatedDate": "2013-02-13T16:09:04.96-08:00",
+    "PlannedForRelease": "",
+    "ReleaseVisibleToPublic": false,
+    "Priority": {
+      "Name": "Low",
+      "Severity": 50,
+      "Id": 1
+    },
+    "ProjectName": "agopenxml",
+    "ReportedDate": "2012-02-07T16:29:22.217-08:00",
+    "Status": {
+      "Name": "Proposed",
+      "Id": 1
+    },
+    "ReasonClosed": {
+      "Name": "Unassigned"
+    },
+    "Summary": "Excel Column Name Generation Bug",
+    "Type": {
+      "Name": "Issue",
+      "Id": 3
+    },
+    "VoteCount": 1,
+    "Id": 10315
+  },
+  "FileAttachments": [],
+  "Comments": [
+    {
+      "Message": "A proposed solution would be to use logic such as this during the associated calls (the ColRowFormat static function and the CellName property):\r\n\r\n            if (colIndex <= 25) return ((char)(colIndex + 65)).ToString();\r\n            else\r\n            {\r\n                StringBuilder sb = new StringBuilder();\r\n                sb.Append((char)(((colIndex / 26) - 1) + 65));\r\n                sb.Append((char)(colIndex % 26 + 65));\r\n                return sb.ToString();\r\n            }",
+      "PostedDate": "2012-02-07T16:32:07.72-08:00",
+      "Id": -2147483648
+    },
+    {
+      "Message": "",
+      "PostedDate": "2013-02-13T16:09:04.96-08:00",
+      "Id": -2147483648
+    }
+  ]
+}

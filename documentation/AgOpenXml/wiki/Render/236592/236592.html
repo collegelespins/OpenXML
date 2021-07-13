@@ -1,0 +1,84 @@
+<div class="wikidoc">I hope to soon add some more documentation on how to use this library, but for now, this code snippet is all I have available. The library works a lot like described on my blog <a href="http://chris.59north.com/post/OpenXML-2b-Silverlight-using-a-little-library.aspx">here</a> and <a href="http://chris.59north.com/post/OpenXML-2b-Silverlight.aspx">here</a>. It has however been reworked from that initial version to make it more flexible. So some changes have been made...<br /><br /><pre>
+private void Button_Click(object sender, System.Windows.RoutedEventArgs e)
+{
+    SaveFileDialog dlg = new SaveFileDialog();    
+    dlg.Filter = &quot;Word Document (.docx)|*.docx|Zip Files (.zip)|*.zip&quot;;  
+    dlg.DefaultExt = &quot;.docx&quot;;    
+    if (dlg.ShowDialog() == true)    
+    {
+        WordDocument doc = new WordDocument(); 
+        doc.ApplicationName = &quot;MyApplication&quot;; 
+        doc.Creator = &quot;Chris Klug&quot;; 
+        doc.Company = &quot;Intergen&quot;;
+
+        FontReference comicSans;
+        FontReference aharoni;
+        AddFonts(doc, out comicSans, out aharoni);
+        Style style = AddStyle(doc, &quot;TitleStyle&quot;, &quot;Title Style&quot;, aharoni);
+
+        Run run = doc.Document.CreateElement&lt;Run&gt;(); 
+        Text t = doc.Document.CreateElement&lt;Text&gt;(); 
+        t.Content = &quot;Title&quot;; 
+        run.Content.Add(t); 
+        run.Properties.Style = style; 
+        doc.Document.Sections[0].Paragraphs[0].Runs.Add(run);
+
+        Paragraph p = doc.Document.CreateElement&lt;Paragraph&gt;(); run = doc.Document.CreateElement&lt;Run&gt;();
+        run.Properties.Font.HighAnsi = comicSans;
+        run.Properties.Font.ComplexScript = comicSans;
+        run.Properties.Font.ASCII = comicSans;
+        run.Properties.Font.EastAsia = comicSans;
+
+        t = doc.Document.CreateElement&lt;Text&gt;();
+        t.Content = &quot;My Text&quot;;
+        run.Content.Add(t);
+
+        run.Content.Add(doc.Document.CreateElement&lt;Break&gt;());
+
+        t = doc.Document.CreateElement&lt;Text&gt;();
+        t.Content = &quot;My Text On The Next Line&quot;;
+        run.Content.Add(t);
+
+        p.Runs.Add(run);
+        doc.Document.Sections[0].Paragraphs.Add(p); 
+
+        using (IStreamProvider storage = new ZipStreamProvider(dlg.OpenFile())) 
+        { 
+            doc.Save(storage); 
+        }
+    }
+}
+
+private void AddFonts(WordDocument doc, out FontReference comicSans, out FontReference aharoni)
+{
+    FontDefinition fontDefinition = doc.FontTable.CreateFontDefinition(&quot;Comic Sans MS&quot;); 
+    fontDefinition.Panose1 = &quot;030F0702030302020204&quot;; 
+    fontDefinition.CharSet = &quot;00&quot;; 
+    fontDefinition.Family = FontFamilyEnumeration.Script; 
+    fontDefinition.Pitch = FontPitchEnumeration.Variable; 
+    fontDefinition.Signature.UnicodeSignature0 = &quot;00000287&quot;; 
+    fontDefinition.Signature.CodePageSignature0 = &quot;0000009F&quot;;
+    comicSans = doc.FontTable.AddFont(fontDefinition);
+
+    fontDefinition = doc.FontTable.CreateFontDefinition(&quot;Aharoni&quot;);
+    fontDefinition.Panose1 = &quot;02010803020104030203&quot;; 
+    fontDefinition.CharSet = &quot;B1&quot;; 
+    fontDefinition.Family = FontFamilyEnumeration.Auto; 
+    fontDefinition.Pitch = FontPitchEnumeration.Variable; 
+    fontDefinition.Signature.UnicodeSignature0 = &quot;00000801&quot;; 
+    fontDefinition.Signature.CodePageSignature0 = &quot;00000020&quot;;
+    aharoni = doc.FontTable.AddFont(fontDefinition);
+}
+
+private Style AddStyle(WordDocument doc, string id, string name, FontReference font)
+{
+    CharacterStyle style = doc.Styles.AddCharacterStyle(id, name); 
+    style.RunProperties.FontSize = 30; 
+    style.RunProperties.IsBold = true;
+    style.RunProperties.Font.ComplexScript = font;
+    style.RunProperties.Font.HighAnsi = font;
+    style.RunProperties.Font.ASCII = font;
+    style.RunProperties.Font.EastAsia = font;
+    return style;
+}
+</pre><br /></div><div class="ClearBoth"></div>

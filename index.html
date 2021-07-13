@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lecture, parsing et affichage de documents OpenXML</title>
+    <script src="UZIP.js"></script>
+    <script src="OpenXml.js"></script>
+    <script>
+
+        function openOxDocument(input){
+            if(input.files == null || input.files[0]==undefined) return;
+            const file = input.files[0];
+            const type = file.type.substring(46);
+            switch(type){
+                case "presentationml.presentation":
+                    new OxPowerPoint(file);
+                break;
+                case "wordprocessingml.document":
+                    new OxWord(file);
+                break;
+                case "spreadsheetml.sheet": 
+                    new OxExcel(file);
+                break;
+            }
+        }
+
+        function consoleLog(color, ...content) {
+            const div = document.createElement("div");
+            document.body.appendChild(div);
+            div.addEventListener("dblclick", (e) => div.remove() );
+            div.style.backgroundColor = color;
+            div.textContent = content.join(" ");       
+        }
+
+    </script>
+</head>
+<body style="font-family: Verdana, Geneva, Tahoma, sans-serif; padding: 4px; margin: 4px;">
+    <input type="file" onchange = openOxDocument(this)>
+</body>
+</html>
